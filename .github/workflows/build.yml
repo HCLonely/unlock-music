@@ -1,4 +1,4 @@
-name: Build
+name: Test Build
 on:
   push:
     paths:
@@ -27,25 +27,18 @@ jobs:
         build: [ legacy, modern ]
         include:
           - build: legacy
-            BUILD_ARGS:
+            BUILD_ARGS: ""
+            BUILD_EXTENSION: true
           - build: modern
             BUILD_ARGS: "-- --modern"
+            BUILD_EXTENSION: false
     steps:
       - uses: actions/checkout@v2
 
       - name: Use Node.js 14.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
-          node-version: 14.x
-
-      - name: Get npm cache directory
-        id: npm-cache
-        run: echo "::set-output name=dir::$(npm config get cache)"
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
+          node-version: "14"
 
       - name: Install Dependencies
         run: |
@@ -59,8 +52,23 @@ jobs:
           npm run build ${{ matrix.BUILD_ARGS }}
           tar -czvf dist.tar.gz -C ./dist .
 
+      - name: Build Extension
+        if: ${{ matrix.BUILD_EXTENSION }}
+        run: |
+          npm run make-extension
+          cd dist
+          zip -rJ9 ../extension.zip *
+          cd ..
+
       - name: Publish artifact
         uses: actions/upload-artifact@v2
         with:
           name: unlock-music-${{ matrix.build }}.tar.gz
           path: ./dist.tar.gz
+
+      - name: Publish artifact - Extension
+        if: ${{ matrix.BUILD_EXTENSION }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: extension.zip
+          path: ./extension.zip
