@@ -203,13 +203,13 @@ class NcmDecrypt {
     gatherResult(): DecryptResult {
         if (!this.newMeta) throw Error("bad sequence")
         return {
-            status: true,
             title: this.newMeta.title,
             artist: this.newMeta.artists?.join("; "),
             ext: this.format,
             album: this.newMeta.album,
             picture: this.image?.url,
             file: URL.createObjectURL(this.blob),
+            blob: this.blob as Blob,
             mime: this.mime
         }
     }

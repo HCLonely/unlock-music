@@ -1,6 +1,4 @@
 export interface DecryptResult {
-    status: boolean,//todo: remove & use Exception
-
     title: string
     album?: string
     artist?: string
@@ -9,10 +7,20 @@ export interface DecryptResult {
     ext: string
 
     file: string
+    blob: Blob
     picture?: string
 
     message?: string
     rawExt?: string
     rawFilename?: string
 
+}
+
+export interface FileInfo {
+    status: string
+    name: string,
+    size: number,
+    percentage: number,
+    uid: number,
+    raw: File
 }

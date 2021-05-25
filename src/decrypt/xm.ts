@@ -42,7 +42,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
     const musicMeta = await metaParseBlob(musicBlob);
     if (ext === "wav") {
         //todo:未知的编码方式
-        console.log(musicMeta.common)
+        console.info(musicMeta.common)
         musicMeta.common.album = "";
         musicMeta.common.artist = "";
         musicMeta.common.title = "";
@@ -52,7 +52,6 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
         raw_filename.indexOf("_") === -1 ? "-" : "_")
 
     return {
-        status: true,
         title,
         artist,
         ext,
@@ -60,6 +59,7 @@ export async function Decrypt(file: File, raw_filename: string, raw_ext: string)
         album: musicMeta.common.album,
         picture: GetCoverFromFile(musicMeta),
         file: URL.createObjectURL(musicBlob),
+        blob: musicBlob,
         rawExt: "xm"
     }
 }
